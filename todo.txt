@@ -1,0 +1,3 @@
+1. update inference scripts
+2. update single_EC_mutation.py
+3. update readme
