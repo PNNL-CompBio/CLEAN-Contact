@@ -63,7 +63,6 @@ def parse_args():
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument('--fasta', type=Path, required=True, help='Mutated fasta file')
-    parser.add_argument('--cmap-dir', type=Path, required=True, help='Directory containing contact maps')
     parser.add_argument('--emb-model', type=str, default='resnet50')
     parser.add_argument('--emb-weight', type=str, default='IMAGENET1K_V2')
     parser.add_argument('--device', type=str, default='cuda')

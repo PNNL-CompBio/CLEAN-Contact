@@ -109,6 +109,15 @@ def csv_to_fasta(csv_name, fasta_name):
         if i > 0:
             outfile.write('>' + rows[0] + '\n')
             outfile.write(rows[2] + '\n')
+
+def fasta_to_csv(fasta_name, csv_name):
+    fastafile = open(fasta_name, 'r')
+    csvfile = open(csv_name, 'w', newline='')
+    csvwriter = csv.writer(csvfile, delimiter='\t')
+    csvwriter.writerow(['Entry', 'EC number', 'Sequence'])
+    for i in fastafile.readlines():
+        if i[0] == '>':
+            csvwriter.writerow([i.strip()[1:], ' ', ' '])
             
 def ensure_dirs():
     paths = ['data/distance_map', 'data/esm_data', 'data/model', 
