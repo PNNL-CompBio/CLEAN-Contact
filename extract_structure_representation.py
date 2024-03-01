@@ -53,6 +53,7 @@ def main(args):
     print(args)
 
     output_dir = Path('data/resnet_data')
+    conmap_dir = Path('data/contact_maps')
 
     df = pd.read_csv(args.input, sep=args.csv_sep)
     pdb_filename_format = 'AF-{}-F1-model_v4.pdb'
@@ -77,6 +78,8 @@ def main(args):
 
         structure = get_structure(PDBFile.read(pdb))[0]
         contact_map = contacts_from_pdb(structure)
+
+        np.save(conmap_dir / f'{prot_id}.npy', contact_map)
 
         cmap1 = np.array([contact_map, contact_map, contact_map])
 

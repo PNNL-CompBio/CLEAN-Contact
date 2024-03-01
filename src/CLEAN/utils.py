@@ -112,7 +112,7 @@ def csv_to_fasta(csv_name, fasta_name):
             
 def ensure_dirs():
     paths = ['data/distance_map', 'data/esm_data', 'data/model', 
-             'data/esm2_data', 'data/resnet_data', 'results']
+             'data/esm2_data', 'data/resnet_data', 'data/contact_maps', 'results']
     for path in paths:
         if not os.path.exists(path):
             os.makedirs(path)
@@ -135,7 +135,7 @@ def merge_sequence_structure_emb(csv_file):
         torch.save(merged, f'data/esm_data/{ec}.pt')
  
 def compute_esm_distance(train_file):
-    ensure_dirs('./data/distance_map/')
+    ensure_dirs()
     _, ec_id_dict = get_ec_id_dict('./data/' + train_file + '.csv')
     use_cuda = torch.cuda.is_available()
     device = torch.device("cuda:0" if use_cuda else "cpu")
