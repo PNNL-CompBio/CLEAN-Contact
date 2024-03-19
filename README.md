@@ -30,7 +30,7 @@ ensure_dirs()
 
 ### Use the precomputed data
 
-Download the precomputed embeddings and distance map for both training and test data from [here](localhost) and put both `esm_data` and `distance_map` folders under the `data` folder.
+Download the precomputed embeddings and distance map for both training and test data from [here](https://drive.google.com/drive/folders/1yw0P8kjiqCUPyYAZdI-GIpSGEnSOScVZ?usp=sharing) and put both `esm_data` and `distance_map` folders under the `data` folder.
 
 ---
 
