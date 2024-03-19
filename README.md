@@ -28,9 +28,17 @@ from src.CLEAN.utils import ensure_dirs
 ensure_dirs()
 ```
 
-Download the precomputed embeddings and distance map for both training and test data from [here](localhost) and put them in the `data` folder.
+### Use the precomputed data
 
-To extract sequence representations and structure representations for your own data, first prepare the protein structures in PDB format under `<pdb-dir>` and the dataset in csv format at `<csv-file>`. 
+Download the precomputed embeddings and distance map for both training and test data from [here](localhost) and put both `esm_data` and `distance_map` folders under the `data` folder.
+
+---
+
+### Use your own data
+
+To extract sequence representations and structure representations for your own data, first prepare the protein structures in PDB format under `<pdb-dir>` and the dataset in **CSV** format at `<csv-file>` or **FASTA** format at `<fasta-file>`. 
+
+#### Data in CSV format
 
 For example, your `<csv-file>` is `data/split100_reduced.csv`. Then run the following commands: 
 
@@ -45,9 +53,51 @@ python
 
 >>> from src.CLEAN.utils import csv_to_fasta, retrive_esm1b_embedding
 
->>> csv_to_fasta('data/split100_reduced.csv', 'data/split100_reduced.fasta')
+>>> csv_to_fasta('data/split100_reduced.csv', 'data/split100_reduced.fasta') # fasta file will be 'data/split100_reduced.fasta'
 
 >>> retrive_esm1b_embedding('split100_reduced')
+```
+
+#### Data in FASTA format
+
+For example, your `<fasta-file>` is `data/split100_reduced.fasta`. Then run the following commands:
+
+```python
+python
+
+>>> from src.CLEAN.utils import fasta_to_csv, retrive_esm1b_embedding
+
+>>> fasta_to_csv('data/split100_reduced.fasta', 'data/split100_reduced.csv') # <csv-file> will be 'data/split100_reduced.csv'
+
+>>> retrive_esm1b_embedding('split100_reduced')
+```
+
+```bash
+python extract_structure_representation.py \
+    --input data/split100_reduced.csv \
+    --pdb-dir <pdb-dir> 
+```
+
+#### Merge sequence and structure representations and compute distance map
+
+Run the following commands to merge computed sequence and structure representations:
+
+```python
+python
+
+>>> from src.CLEAN.utils import merge_sequence_structure_emb
+
+>>> merge_sequence_structure_emb(<csv-file>)
+```
+
+If your data will be used as training data, run the following commands to compute distance map:
+
+```python
+python
+
+>>> from src.CLEAN.utils import compute_esm_distance
+
+>>> compute_esm_distance(<csv-file>)
 ```
 
 ## Inference
