@@ -2,75 +2,102 @@
 
 This repository contains the code and data for the paper "CLEAN-Contact: Contrastive learning enabled enzyme function prediction with contact map".
 
-## Installation and Setup
-### Requirements
+## Installation
 
 Python == 3.10.13, PyTorch == 2.1.1, torchvision == 0.16.1;
 fair-esm == 2.0.0, pytorch-cuda == 12.1
 
-### Installation
-1. Clone the code and start setting up the conda environment.
-    ```
-    git clone https://github.com/PNNL-CompBio/CLEAN-contact-for-public.git
-    cd CLEAN-contact-for-public
-    conda create -n clean-contact python=3.10.13 -y
-    conda activate clean-contact
-    conda install -c conda-forge biotite matplotlib numpy pandas pyyaml scikit-learn scipy tensorboardx tqdm
-    ```
-2. Install PyTorch with CUDA.
-  * find your operating system's installation method https://pytorch.org/get-started/locally/ 
-  * here's an example command for Linux users:
-      ```
-      conda install pytorch=2.1.1 torchvision=0.16.1 torchaudio pytorch-cuda=12.1 -c pytorch -c nvidia 
-      ```
-3. Install fair-esm.
-    ```
-    python -m pip install fair-esm==2.0.0
-    python build.py install
-    git clone https://github.com/facebookresearch/esm.git
-    ```
+Follow https://pytorch.org/ to install PyTorch and torchvision with CUDA. 
 
-### Setup
-
-1. Create required folders:
-    ```
-    python
-    >>> from src.CLEAN.utils import ensure_dirs
-    >>> ensure_dirs()
-    ```
-2. Download the precomputed embeddings and distance map for both training and test data from [here](localhost) and put 
-them in the `data` folder.
-
-## Pre-inference 
-Before running the inference step, you'll need the structure representations and sequence representations of your own 
-test data. Currently, your test data must be in `csv` format.
-
-### Structure representations
-1. Create the directory where the `pdb` files will go. This should be in the top level directory CLEAN-contact-for-public,
-along with extract_structure_representation.py.
-    ```
-    mkdir <pdb-dir>
-    ```
-2. Place your test data into the `data/` directory
-   * data/<test-csv>
-3. Run extract_structure_representation.py to turn the amino acid sequences in your test csv into ResNet50 embeddings.
-
-    * For example, if your `<test-csv>` is `data/split100_reduced.csv` and your `<pdb-dir>` is `PDB_dir`, then run: 
-
-    ```
-    python extract_structure_representation.py \
-        --input data/split100_reduced.csv \
-        --pdb-dir PDB_dir 
-    ```
-
-### Sequence representations
-Assuming that your test data is already in the `data/` directory, run the following in order to turn the amino acid 
-sequences into ESM2 embeddings, again using the example where your `<test-csv>` is `data/split100_reduced.csv`.
+```bash
+git clone https://github.com/PNNL-CompBio/CLEAN-contact-for-public.git
+cd CLEAN-contact-for-public
+conda create -n clean-contact python=3.10 -y
+conda activate clean-contact
+python -m pip install fair-esm==2.0.0
+python build.py install
+git clone https://github.com/facebookresearch/esm.git
 ```
+
+## Prepare data
+
+First create required folders:
+
+```bash
+from src.CLEAN.utils import ensure_dirs
+ensure_dirs()
+```
+
+### Use the precomputed data
+
+Download the precomputed embeddings and distance map for both training and test data from [here](https://drive.google.com/drive/folders/1yw0P8kjiqCUPyYAZdI-GIpSGEnSOScVZ?usp=sharing) and put both `esm_data` and `distance_map` folders under the `data` folder.
+
+---
+
+### Use your own data
+
+To extract sequence representations and structure representations for your own data, first prepare the protein structures in PDB format under `<pdb-dir>` and the dataset in **CSV** format at `<csv-file>` or **FASTA** format at `<fasta-file>`. 
+
+#### Data in CSV format
+
+For example, your `<csv-file>` is `data/split100_reduced.csv`. Then run the following commands: 
+
+```bash
+python extract_structure_representation.py \
+    --input data/split100_reduced.csv \
+    --pdb-dir <pdb-dir> 
+```
+
+```python
 python
+
 >>> from src.CLEAN.utils import csv_to_fasta, retrive_esm1b_embedding
->>> csv_to_fasta('data/split100_reduced.csv', 'data/split100_reduced.fasta')
+
+>>> csv_to_fasta('data/split100_reduced.csv', 'data/split100_reduced.fasta') # fasta file will be 'data/split100_reduced.fasta'
+
 >>> retrive_esm1b_embedding('split100_reduced')
+```
+
+#### Data in FASTA format
+
+For example, your `<fasta-file>` is `data/split100_reduced.fasta`. Then run the following commands:
+
+```python
+python
+
+>>> from src.CLEAN.utils import fasta_to_csv, retrive_esm1b_embedding
+
+>>> fasta_to_csv('data/split100_reduced.fasta', 'data/split100_reduced.csv') # <csv-file> will be 'data/split100_reduced.csv'
+
+>>> retrive_esm1b_embedding('split100_reduced')
+```
+
+```bash
+python extract_structure_representation.py \
+    --input data/split100_reduced.csv \
+    --pdb-dir <pdb-dir> 
+```
+
+#### Merge sequence and structure representations and compute distance map
+
+Run the following commands to merge computed sequence and structure representations:
+
+```python
+python
+
+>>> from src.CLEAN.utils import merge_sequence_structure_emb
+
+>>> merge_sequence_structure_emb(<csv-file>)
+```
+
+If your data will be used as training data, run the following commands to compute distance map:
+
+```python
+python
+
+>>> from src.CLEAN.utils import compute_esm_distance
+
+>>> compute_esm_distance(<csv-file>)
 ```
 
 ## Inference
