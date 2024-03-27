@@ -14,6 +14,7 @@ git clone https://github.com/PNNL-CompBio/CLEAN-contact-for-public.git
 cd CLEAN-contact-for-public
 conda create -n clean-contact python=3.10 -y
 conda activate clean-contact
+conda install -c conda-forge biopython biotite matplotlib numpy pandas pyyaml scikit-learn scipy tensorboardx tqdm
 python -m pip install fair-esm==2.0.0
 python build.py install
 git clone https://github.com/facebookresearch/esm.git
@@ -67,7 +68,7 @@ python
 
 >>> from src.CLEAN.utils import fasta_to_csv, retrive_esm1b_embedding
 
->>> fasta_to_csv('data/split100_reduced.fasta', 'data/split100_reduced.csv') # <csv-file> will be 'data/split100_reduced.csv'
+>>> fasta_to_csv('split100_reduced') # output will be 'data/split100_reduced.csv'
 
 >>> retrive_esm1b_embedding('split100_reduced')
 ```
@@ -154,7 +155,7 @@ python
 
 >>> from src.CLEAN.utils import fasta_to_csv, merge_sequence_structure_emb
 
->>> fasta_to_csv('data/split100_reduced_single_seq_ECs.fasta', 'data/split100_reduced_single_seq_ECs.csv')
+>>> fasta_to_csv('split100_reduced_single_seq_ECs')
 
 >>> merge_sequence_structure_emb('split100_reduced_single_seq_ECs')
 ```

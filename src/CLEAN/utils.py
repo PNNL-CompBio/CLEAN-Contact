@@ -8,6 +8,7 @@ import numpy as np
 import subprocess
 import pickle
 from .distance_map import get_dist_map
+from Bio import SeqIO
 
 def seed_everything(seed=1234):
     random.seed(seed)
@@ -110,14 +111,15 @@ def csv_to_fasta(csv_name, fasta_name):
             outfile.write('>' + rows[0] + '\n')
             outfile.write(rows[2] + '\n')
 
-def fasta_to_csv(fasta_name, csv_name):
-    fastafile = open(fasta_name, 'r')
-    csvfile = open(csv_name, 'w', newline='')
-    csvwriter = csv.writer(csvfile, delimiter='\t')
-    csvwriter.writerow(['Entry', 'EC number', 'Sequence'])
-    for i in fastafile.readlines():
-        if i[0] == '>':
-            csvwriter.writerow([i.strip()[1:], ' ', ' '])
+def fasta_to_csv(fasta_name):
+    # fasta_name: input string with name of fasta that's in the /data folder
+    # fasta headers could have just the entry_id or entry_id with other annotation info
+    # outputs csv with same name as fasta, and will also be in the /data folder
+    with open('./data/' + fasta_name + '.csv', 'w', newline='') as csvfile:
+        csvwriter = csv.writer(csvfile, delimiter='\t')
+        csvwriter.writerow(['Entry', 'EC number', 'Sequence'])
+        for record in SeqIO.parse('./data/' + fasta_name + '.fasta', "fasta"):
+            csvwriter.writerow([record.id, "", str(record.seq)])
             
 def ensure_dirs():
     paths = ['data/distance_map', 'data/esm_data', 'data/model', 
