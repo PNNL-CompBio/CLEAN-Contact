@@ -1,6 +1,6 @@
 # CLEAN-Contact
 
-This repository contains the code and data for the paper "CLEAN-Contact: Contrastive learning enabled enzyme function prediction with contact map".
+This repository contains the code and data for the paper "CLEAN-Contact: Contrastive Learning-enabled Enzyme Functional Annotation Prediction with Structural Inference".
 
 ## Installation
 
@@ -10,7 +10,7 @@ fair-esm == 2.0.0, pytorch-cuda == 12.1
 Follow https://pytorch.org/ to install PyTorch and torchvision with CUDA. 
 
 ```bash
-git clone https://github.com/PNNL-CompBio/CLEAN-contact-for-public.git
+git clone https://github.com/PNNL-CompBio/CLEAN-Contact.git
 cd CLEAN-contact-for-public
 conda create -n clean-contact python=3.10 -y
 conda activate clean-contact
