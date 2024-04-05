@@ -52,11 +52,11 @@ python extract_structure_representation.py \
 ```python
 python
 
->>> from src.CLEAN.utils import csv_to_fasta, retrive_esm1b_embedding
+>>> from src.CLEAN.utils import csv_to_fasta, retrieve_esm2_embedding
 
 >>> csv_to_fasta('data/split100_reduced.csv', 'data/split100_reduced.fasta') # fasta file will be 'data/split100_reduced.fasta'
 
->>> retrive_esm1b_embedding('split100_reduced')
+>>> retrieve_esm2_embedding('split100_reduced')
 ```
 
 #### Data in FASTA format
@@ -66,11 +66,11 @@ For example, your `<fasta-file>` is `data/split100_reduced.fasta`. Then run the 
 ```python
 python
 
->>> from src.CLEAN.utils import fasta_to_csv, retrive_esm1b_embedding
+>>> from src.CLEAN.utils import fasta_to_csv, retrieve_esm2_embedding
 
 >>> fasta_to_csv('split100_reduced') # output will be 'data/split100_reduced.csv'
 
->>> retrive_esm1b_embedding('split100_reduced')
+>>> retrieve_esm2_embedding('split100_reduced')
 ```
 
 ```bash

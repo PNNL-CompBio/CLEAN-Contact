@@ -154,7 +154,7 @@ def create_fasta_only_ids(fasta_name):
     if os.path.isfile(output_fasta_file):
         return output_fasta_file
 
-def retrive_esm1b_embedding(fasta_name):
+def retrieve_esm2_embedding(fasta_name):
     esm_script = "esm/scripts/extract.py"
     esm_out = "data/esm2_data"
     esm_type = "esm2_t36_3B_UR50D"
@@ -191,7 +191,7 @@ def compute_esm_distance(train_file):
     pickle.dump(esm_emb, open('./data/distance_map/' + train_file + '_esm.pkl', 'wb'))
     
 def prepare_infer_fasta(fasta_name):
-    retrive_esm1b_embedding(fasta_name)
+    retrieve_esm2_embedding(fasta_name)
     csvfile = open('./data/' + fasta_name +'.csv', 'w', newline='')
     csvwriter = csv.writer(csvfile, delimiter = '\t')
     csvwriter.writerow(['Entry', 'EC number', 'Sequence'])
