@@ -127,14 +127,48 @@ def ensure_dirs():
     for path in paths:
         if not os.path.exists(path):
             os.makedirs(path)
-        
-def retrive_esm1b_embedding(fasta_name):
+
+def check_fasta_headers(fasta_name):
+    # check fasta headers to see if they only contain IDs
+    # if any header contains an ID as well as annotation info, header_just_id will return as False
+    header_just_id = True
+
+    with open(fasta_name) as handle:
+        for record in SeqIO.parse(handle, "fasta"):
+            if len(record.description.split()) > 1:
+                header_just_id = False
+                break
+
+    return header_just_id
+
+def create_fasta_only_ids(fasta_name):
+    # create a fasta with only IDs in the headers, no extra annotation info
+    # if the file was successfully created, return the new output fasta file name
+    output_fasta_file = os.path.splitext(fasta_name)[0] + '_only_ids_in_headers.fasta'
+
+    with open(fasta_name) as input_handle, open(output_fasta_file, "w") as output_handle:
+        for record in SeqIO.parse(input_handle, "fasta"):
+            # write only the ID as the header to the output fasta
+            output_handle.write(f">{record.id}\n{record.seq}\n")
+
+    if os.path.isfile(output_fasta_file):
+        return output_fasta_file
+
+def retrieve_esm2_embedding(fasta_name):
     esm_script = "esm/scripts/extract.py"
     esm_out = "data/esm2_data"
     esm_type = "esm2_t36_3B_UR50D"
     fasta_name = "data/" + fasta_name + ".fasta"
-    command = ["python", esm_script, esm_type, 
-              fasta_name, esm_out, "--include", "mean"]
+
+    # esm/scripts/extract.py will name the embeddings using full fasta headers, which could include the ID and
+    # any annotation information i.e. "data/esm2_data/ID/the/rest/of/the/annotation/info.pt"
+    # Since that name format leads to errors downstream, ensure fasta headers contain only IDs.
+    if check_fasta_headers(fasta_name) == False:
+        fasta_only_ids = create_fasta_only_ids(fasta_name)
+        command = ["python", esm_script, esm_type, fasta_only_ids, esm_out, "--include", "mean"]
+    else:
+        command = ["python", esm_script, esm_type, fasta_name, esm_out, "--include", "mean"]
+
     subprocess.run(command)
 
 def merge_sequence_structure_emb(csv_file):
@@ -157,7 +191,7 @@ def compute_esm_distance(train_file):
     pickle.dump(esm_emb, open('./data/distance_map/' + train_file + '_esm.pkl', 'wb'))
     
 def prepare_infer_fasta(fasta_name):
-    retrive_esm1b_embedding(fasta_name)
+    retrieve_esm2_embedding(fasta_name)
     csvfile = open('./data/' + fasta_name +'.csv', 'w', newline='')
     csvwriter = csv.writer(csvfile, delimiter = '\t')
     csvwriter.writerow(['Entry', 'EC number', 'Sequence'])
