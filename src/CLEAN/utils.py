@@ -172,12 +172,16 @@ def retrieve_esm2_embedding(fasta_name):
     subprocess.run(command)
 
 def merge_sequence_structure_emb(csv_file):
+    # get_ec_id_dict() actually returns tuple with 2 dicts
+    # _ would be Dict[any, any]
+    # ec_id_dict is Dict[any, set[any]]
     _, ec_id_dict = get_ec_id_dict(f'data/{csv_file}.csv')
-    for ec in ec_id_dict:
-        seq_emb = format_esm(torch.load(f'data/esm2_data/{ec}.pt'))
-        stru_emb = torch.load(f'data/resnet_data/{ec}.pt')
-        merged = torch.cat([seq_emb, stru_emb], dim=0)
-        torch.save(merged, f'data/esm_data/{ec}.pt')
+    for key, value in ec_id_dict.items():
+        for ec in value:
+            seq_emb = format_esm(torch.load(f'data/esm2_data/{ec}.pt'))
+            stru_emb = torch.load(f'data/resnet_data/{ec}.pt')
+            merged = torch.cat([seq_emb, stru_emb], dim=0)
+            torch.save(merged, f'data/esm_data/{ec}.pt')
  
 def compute_esm_distance(train_file):
     ensure_dirs()
